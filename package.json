@@ -1,7 +1,6 @@
 {
   "name": "parkingBackend",
   "version": "0.0.1",
-  "main": "python/main.py",
   "scripts": {
     "start": "cd python && python main.py",
     "dev": "cd python && python main.py",

@@ -4,8 +4,9 @@ services:
     name: parking-backend
     runtime: python
     plan: free
-    buildCommand: pip install -r python/requirements.txt
-    startCommand: cd python && uvicorn main:app --host 0.0.0.0 --port $PORT
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    rootDirectory: python
     envVars:
       - key: PYTHON_VERSION
         value: 3.11.0
@@ -22,8 +23,9 @@ services:
     name: parking-frontend
     runtime: static
     plan: free
-    buildCommand: cd frontend && npm install && npm run build
-    staticPublishPath: frontend/dist
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist
+    rootDirectory: frontend
     routes:
       - type: rewrite
         source: /*
