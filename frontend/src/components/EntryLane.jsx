@@ -15,11 +15,18 @@ function EntryLane({ latestEntry, allEntries, onEntryAdded }) {
   const [selectedEntry, setSelectedEntry] = useState(null);
 
   // Tự động cập nhật selectedEntry khi có xe mới vào (latestEntry thay đổi)
+  // Chỉ update nếu chưa có selectedEntry hoặc latestEntry khác với selectedEntry hiện tại
   useEffect(() => {
     if (latestEntry) {
-      setSelectedEntry(latestEntry);
+      const latestId = String(latestEntry._id || latestEntry.id);
+      const selectedId = String(selectedEntry?._id || selectedEntry?.id || '');
+
+      // Chỉ update nếu là xe khác hoặc chưa có selectedEntry
+      if (!selectedEntry || latestId !== selectedId) {
+        setSelectedEntry(latestEntry);
+      }
     }
-  }, [latestEntry]); // Depend on the whole object to catch all changes
+  }, [latestEntry, selectedEntry]); // Track both to compare
 
   const handleEntryClick = async (entry) => {
     try {
@@ -54,17 +61,21 @@ function EntryLane({ latestEntry, allEntries, onEntryAdded }) {
       if (result.success) {
         // Show success message
         setSuccess(`Xe ${formData.licensePlate.toUpperCase()} đã vào bãi thành công!`);
-        // Reset form
-        setFormData({ licensePlate: '', cardId: '', image: '' });
-        setShowForm(false);
-        // Notify parent to refresh data - MUST run to update list
-        if (onEntryAdded) {
-          await onEntryAdded();
-        }
-        // Set the newly created entry as selected
+
+        // Set the newly created entry as selected IMMEDIATELY
         if (result.data) {
           setSelectedEntry(result.data);
         }
+
+        // Reset form
+        setFormData({ licensePlate: '', cardId: '', image: '' });
+        setShowForm(false);
+
+        // Notify parent to refresh data - this updates the list
+        if (onEntryAdded) {
+          await onEntryAdded();
+        }
+
         // Auto-hide success message after 3 seconds
         setTimeout(() => setSuccess(''), 3000);
       }
