@@ -89,15 +89,15 @@ async def health_check():
 # ==================== STATIC FILES ====================
 
 # Serve frontend build (dist/)
-dist_path = os.path.join(os.path.dirname(__file__), "..", "dist")
+dist_path = os.path.join(os.path.dirname(__file__), "dist")
 if os.path.exists(dist_path):
     app.mount("/", StaticFiles(directory=dist_path, html=True), name="frontend")
     info("Serving frontend from dist/")
 else:
-    info("Frontend build not found at dist/, skipping static files")
+    info(f"Frontend build not found at {dist_path}, skipping static files")
 
 # Serve public files (images)
-public_path = os.path.join(os.path.dirname(__file__), "..", "public")
+public_path = os.path.join(os.path.dirname(__file__), "public")
 if os.path.exists(public_path):
     app.mount("/public", StaticFiles(directory=public_path), name="public")
     info("Serving public files from public/")
